@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1419">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Anchor">
+<title>Anchor</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{
+  --bg:#0f1419; --panel:#161d26; --panel2:#1c2531; --line:#263241;
+  --text:#e3e9ef; --muted:#8b98a7; --dim:#5d6b7a;
+  --accent:#6cc4b0; --accent-ink:#0c2a24; --warm:#d9a86c; --soft:#8fa8d6;
+  --danger:#d98080; --r:14px; --tap:56px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font:17px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input,textarea,select{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:12px 16px 40px}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:8px 0 14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:15px}
+.brand img{width:28px;height:28px;border-radius:7px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.dot.off{background:var(--dim);box-shadow:none}
+.label{font:600 12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:0 0 12px}
+.row{display:flex;gap:10px;align-items:center}
+.row.wrapr{flex-wrap:wrap}
+.grow{flex:1}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:22px;font-weight:650;margin-top:2px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:var(--tap);padding:0 18px;border-radius:12px;
+  border:1px solid var(--line);background:var(--panel2);font-weight:600;cursor:pointer;text-decoration:none;color:var(--text);width:100%}
+.btn:active{transform:scale(.985)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{background:transparent}
+.btn.danger{border-color:var(--danger);color:var(--danger);background:transparent}
+.btn.small{min-height:44px;padding:0 14px;width:auto;font-size:15px}
+.btn.done{opacity:.6}
+.btn .sub{font-weight:400;color:var(--muted);font-size:14px}
+.urge{min-height:132px;font-size:30px;letter-spacing:.06em;border-radius:20px;background:#1f2a3a;border:2px solid var(--soft);color:#dfe8fb;margin:4px 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.scale button{min-height:64px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);font-size:22px;font-weight:650;cursor:pointer}
+.scale button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.scale-ends{display:flex;justify-content:space-between;color:var(--dim);font-size:13px;margin-top:4px}
+.choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.choice button{min-height:var(--tap);border-radius:12px;border:1px solid var(--line);background:var(--panel2);font-weight:600;cursor:pointer}
+.choice button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+input[type=text],input[type=tel],input[type=url],input[type=password],input[type=time],textarea,select{
+  width:100%;min-height:52px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#0c1116;outline:none}
+input:focus,textarea:focus{border-color:var(--accent)}
+textarea{min-height:110px;resize:vertical}
+textarea.big{min-height:260px}
+.field{margin:14px 0}
+.field>.label{display:block;margin-bottom:8px}
+h2{font-size:22px;margin:4px 0 14px;font-weight:650}
+h3{font-size:15px;margin:0 0 10px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.check{display:flex;align-items:center;gap:14px;min-height:var(--tap);padding:8px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.check:last-child{border-bottom:0}
+.check input[type=checkbox]{width:26px;height:26px;flex:none;accent-color:var(--accent)}
+.lowday{border-color:var(--warm)}
+.lowday .label{color:var(--warm)}
+.support{border-color:var(--soft)}
+.support .label{color:var(--soft)}
+.line-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.line-item:last-child{border-bottom:0}
+.line-item .txt{flex:1;min-width:0;overflow-wrap:anywhere}
+.iconbtn{min-width:44px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-size:15px}
+.timer{font:600 64px/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center;margin:12px 0 6px;letter-spacing:.04em}
+.prompt{min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.prompt .big{font-size:24px;font-weight:600}
+.breath{width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,#6cc4b055,#6cc4b011);border:2px solid var(--accent);
+  animation:breath 10s ease-in-out infinite}
+@keyframes breath{0%{transform:scale(.55)}40%{transform:scale(1)}100%{transform:scale(.55)}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--panel2);border:1px solid var(--accent);
+  padding:12px 20px;border-radius:12px;z-index:50;max-width:90vw;text-align:center}
+.modal-bg{position:fixed;inset:0;background:#000a;z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:88vh;overflow:auto;
+  padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.stack>*+*{margin-top:10px}
+.chat{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.msg{padding:10px 14px;border-radius:14px;max-width:88%;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:#22303f}
+.msg.assistant{align-self:flex-start;background:var(--panel);border:1px solid var(--line)}
+.msg.sys{align-self:center;color:var(--muted);font-size:14px;background:none;padding:4px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px dashed var(--accent);border-radius:12px;padding:10px 12px;margin-top:4px}
+pre.sum{white-space:pre-wrap;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);margin:0;overflow-wrap:anywhere}
+svg.trend{width:100%;height:150px;display:block}
+.back{background:none;border:0;color:var(--muted);min-height:44px;padding:0 4px;cursor:pointer;font-size:16px}
+.menu-list .btn{justify-content:flex-start;margin-bottom:8px}
+.warn{color:var(--warm);font-size:14px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+'use strict';
+/* ========== Storage ========== */
+const KEY = 'anchor.v1';
+const DEFAULTS = () => ({
+  v: 1,
+  checkins: [],   // {id, date, type:'morning'|'evening', ts, mood, energy, word, minimums?:'yes'|'partial'|'lowday'}
+  urges: [],      // {id, date, ts, text, outcome:'rode'|'didnt'}
+  lowdays: {},    // date -> {dogs, journal, daughter}
+  about: '',
+  notes: [],      // {id, ts, text, edited?}
+  chat: [],       // {role:'user'|'assistant', content, ts}
+  settings: {
+    remOn: false, remMorning: '08:00', remEvening: '21:00',
+    aiOn: false, apiKey: '',
+    contacts: [], eap: '', portal: ''
+  },
+  safety: { dismissedThrough: '' },
+  remSent: {},
+  urgeActive: null
+});
+let S = load();
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return DEFAULTS();
+    return normalize(JSON.parse(raw));
+  } catch (e) { return DEFAULTS(); }
+}
+function normalize(d) {
+  const base = DEFAULTS();
+  const out = Object.assign(base, d || {});
+  out.settings = Object.assign(DEFAULTS().settings, (d && d.settings) || {});
+  out.safety = Object.assign(DEFAULTS().safety, (d && d.safety) || {});
+  for (const k of ['checkins', 'urges', 'notes', 'chat']) if (!Array.isArray(out[k])) out[k] = [];
+  if (typeof out.lowdays !== 'object' || !out.lowdays) out.lowdays = {};
+  if (!Array.isArray(out.settings.contacts)) out.settings.contacts = [];
+  return out;
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch (e) { toast('Could not save. Storage may be full.'); }
+}
+
+/* ========== Helpers ========== */
+const $ = s => document.querySelector(s);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const pad = n => String(n).padStart(2, '0');
+const dkey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const todayKey = () => dkey(new Date());
+const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (k, n) => { const d = parseKey(k); d.setDate(d.getDate() + n); return dkey(d); };
+const fmtDate = k => parseKey(k).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+const fmtTs = ts => new Date(ts).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+const r1 = n => n == null ? '–' : (Math.round(n * 10) / 10).toString();
+
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'value') el.value = v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : String(kid));
+  }
+  return el;
+}
+function toast(msg, ms = 2200) {
+  const t = h('div', { class: 'toast', role: 'status' }, msg);
+  document.body.append(t);
+  setTimeout(() => t.remove(), ms);
+}
+function modal(title, body, actions) {
+  const bg = h('div', { class: 'modal-bg' });
+  const close = () => bg.remove();
+  const box = h('div', { class: 'modal', role: 'dialog', 'aria-label': title },
+    h('h2', {}, title), body,
+    h('div', { class: 'stack', style: 'margin-top:16px' },
+      (actions || [{ label: 'Close' }]).map(a => h('button', {
+        class: 'btn ' + (a.cls || ''), onclick: () => { if (a.fn && a.fn() === false) return; close(); }
+      }, a.label))));
+  bg.addEventListener('click', e => { if (e.target === bg) close(); });
+  bg.append(box);
+  document.body.append(bg);
+  return close;
+}
+function download(name, text, type) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = h('a', { href: url, download: name });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+function scale(value, onPick) {
+  const wrap = h('div');
+  const row = h('div', { class: 'scale' });
+  for (let i = 1; i <= 5; i++) {
+    const b = h('button', { class: value === i ? 'on' : '', type: 'button', 'aria-label': String(i) }, i);
+    b.onclick = () => { [...row.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); onPick(i); };
+    row.append(b);
+  }
+  wrap.append(row, h('div', { class: 'scale-ends' }, h('span', {}, 'low'), h('span', {}, 'high')));
+  return wrap;
+}
+function choice(opts, value, onPick) {
+  const row = h('div', { class: 'choice' });
+  for (const [val, label] of opts) {
+    const b = h('button', { type: 'button', class: value === val ? 'on' : '' }, label);
+    b.onclick = () => { [...row.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); onPick(val); };
+    row.append(b);
+  }
+  return row;
+}
+
+/* ========== Domain ========== */
+const getCheckin = (date, type) => S.checkins.find(c => c.date === date && c.type === type);
+const lowdayDone = ld => !!(ld && ld.dogs && ld.daughter && (ld.journal || '').trim());
+function dayWin(date) {
+  const ev = getCheckin(date, 'evening');
+  return (ev && ev.minimums === 'yes') || lowdayDone(S.lowdays[date]);
+}
+function dayMoods(date) { return S.checkins.filter(c => c.date === date).map(c => c.mood); }
+function isLowMoodDay(date) { return dayMoods(date).some(m => m <= 2); }
+function hasCheckinDay(date) { return S.checkins.some(c => c.date === date); }
+function streak(endKey = todayKey()) {
+  let k = endKey, n = 0;
+  if (!hasCheckinDay(k)) k = addDays(k, -1); // today not done yet doesn't break it
+  while (hasCheckinDay(k)) { n++; k = addDays(k, -1); }
+  return n;
+}
+// Safety net: most recent run of >=3 consecutive low-mood days, shown until dismissed.
+function safetyTriggered() {
+  const t = todayKey();
+  for (let i = 0; i < 30; i++) {
+    const end = addDays(t, -i);
+    if (isLowMoodDay(end) && isLowMoodDay(addDays(end, -1)) && isLowMoodDay(addDays(end, -2))) {
+      let start = addDays(end, -2);
+      while (isLowMoodDay(addDays(start, -1))) start = addDays(start, -1);
+      return start > (S.safety.dismissedThrough || '') ? end : null;
+    }
+  }
+  return null;
+}
+const CRISIS_RE = /\b(suicid\w*|kill (my ?self|me)|end (it all|my life)|want(ed)? to die|don'?t want to (be here|live|wake up)|self[- ]?harm\w*|hurt(ing)? my ?self|cut(ting)? my ?self|overdos\w*|no reason to live|better off (dead|without me)|in crisis)\b/i;
+const BODY_RE = /\b(calori\w*|kcal|weigh\w*|lbs?|pounds?|kg|bmi|diet\w*|macros?|portion\w*|body ?fat)\b/i;
+
+/* ========== Summaries (auto-memory) ========== */
+function summarize(days) {
+  const end = todayKey(), start = addDays(end, -(days - 1));
+  const inR = d => d >= start && d <= end;
+  const ci = S.checkins.filter(c => inR(c.date));
+  const ur = S.urges.filter(u => inR(u.date));
+  const ld = Object.entries(S.lowdays).filter(([d]) => inR(d));
+  const dates = [];
+  for (let k = start; k <= end; k = addDays(k, 1)) dates.push(k);
+  let longest = 0, run = 0;
+  for (const k of dates) { run = hasCheckinDay(k) ? run + 1 : 0; longest = Math.max(longest, run); }
+  const ev = ci.filter(c => c.type === 'evening');
+  const cnt = v => ev.filter(c => c.minimums === v).length;
+  const lines = [
+    `Window: ${start} to ${end} (${days} days)`,
+    `Check-ins: ${ci.length} (morning ${ci.filter(c => c.type === 'morning').length}, evening ${ev.length}); days with a check-in: ${new Set(ci.map(c => c.date)).size}`,
+    `Avg mood: ${r1(avg(ci.map(c => c.mood)))} / 5; avg energy: ${r1(avg(ci.map(c => c.energy)))} / 5`,
+    `Morning mood avg: ${r1(avg(ci.filter(c => c.type === 'morning').map(c => c.mood)))}; evening mood avg: ${r1(avg(ev.map(c => c.mood)))}`,
+    `Days with mood 1-2: ${dates.filter(isLowMoodDay).length}`,
+    `Minimums: yes ${cnt('yes')}, partial ${cnt('partial')}, low-day ${cnt('lowday')}; wins (incl. completed low days): ${dates.filter(dayWin).length}`,
+    `Low days used: ${ld.length}; low-day minimums completed: ${ld.filter(([, v]) => lowdayDone(v)).length}`,
+    `Urges logged: ${ur.length}; rode it out: ${ur.filter(u => u.outcome === 'rode').length}; didn't: ${ur.filter(u => u.outcome === 'didnt').length}`,
+    `Current check-in streak: ${streak()} days; longest in window: ${longest}`
+  ];
+  const words = ci.filter(c => c.word);
+  if (days <= 14) {
+    if (words.length) lines.push('Their words (check-ins): ' + words.map(c => `${c.date.slice(5)} ${c.type[0]}: "${c.word}"`).join('; '));
+    const ut = ur.filter(u => u.text);
+    if (ut.length) lines.push('Their words (urges): ' + ut.map(u => `${u.date.slice(5)}: "${u.text}"`).join('; '));
+    const jl = ld.filter(([, v]) => (v.journal || '').trim());
+    if (jl.length) lines.push('Their journal lines: ' + jl.map(([d, v]) => `${d.slice(5)}: "${v.journal.trim()}"`).join('; '));
+  } else {
+    const freq = {};
+    for (const c of words) { const w = c.word.toLowerCase(); freq[w] = (freq[w] || 0) + 1; }
+    const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 20);
+    if (top.length) lines.push('Their check-in words (count): ' + top.map(([w, n]) => `"${w}" ${n}`).join(', '));
+    const ut = ur.filter(u => u.text).slice(-10);
+    if (ut.length) lines.push('Recent urge notes (their words): ' + ut.map(u => `${u.date.slice(5)}: "${u.text}"`).join('; '));
+  }
+  return lines.join('\n');
+}
+
+/* ========== Navigation ========== */
+let view = 'home', timerHandle = null;
+function go(v, arg, push = true) {
+  clearInterval(timerHandle); timerHandle = null;
+  view = v;
+  if (push && v !== 'home') history.pushState({ v, arg }, '');
+  const app = $('#app');
+  app.innerHTML = '';
+  app.append((VIEWS[v] || VIEWS.home)(arg));
+  window.scrollTo(0, 0);
+}
+window.addEventListener('popstate', e => go(e.state ? e.state.v : 'home', e.state && e.state.arg, false));
+function backHome() { if (history.state) history.back(); else go('home', null, false); }
+function topbar(title) {
+  return h('header', { class: 'top' },
+    title ? h('button', { class: 'back', onclick: backHome }, '‹ Home') :
+      h('div', { class: 'brand' }, h('img', { src: 'icon.svg', alt: '' }), 'Anchor'),
+    title ? h('span', { class: 'label' }, title) :
+      h('div', { class: 'row' },
+        h('span', { class: 'dot' + (navigator.onLine ? '' : ' off'), title: navigator.onLine ? 'online' : 'offline' }),
+        h('button', { class: 'iconbtn', 'aria-label': 'Menu', onclick: () => go('menu') }, '☰')));
+}
+
+/* ========== Views ========== */
+const VIEWS = {};
+
+VIEWS.home = () => {
+  const t = todayKey();
+  const m = getCheckin(t, 'morning'), e = getCheckin(t, 'evening');
+  const hour = new Date().getHours();
+  const root = h('div', {}, topbar());
+
+  root.append(h('div', { class: 'stats' },
+    h('div', { class: 'stat' }, h('span', { class: 'label' }, 'Streak'), h('b', {}, streak())),
+    h('div', { class: 'stat' }, h('span', { class: 'label' }, 'Mood'), h('b', {}, m || e ? (e || m).mood : '–')),
+    h('div', { class: 'stat' }, h('span', { class: 'label' }, 'Energy'), h('b', {}, m || e ? (e || m).energy : '–'))));
+
+  if (safetyTriggered()) root.append(supportCard(true));
+  if (S.lowdays[t]) root.append(lowdayPanel(t));
+  else if (m && m.mood <= 2) root.append(h('div', { class: 'panel lowday' },
+    h('div', { class: 'label' }, 'Low-Day Mode'),
+    h('p', { style: 'margin-top:8px' }, 'Switch to low-day minimums for today?'),
+    h('button', { class: 'btn', onclick: () => { startLowday(t); go('home', null, false); } }, 'Switch to Low-Day Mode')));
+
+  const ciBtn = (type, c, label) => h('button', {
+    class: 'btn ' + (c ? 'done' : (type === 'morning' ? hour < 15 : hour >= 15) ? 'primary' : ''),
+    onclick: () => go('checkin', type)
+  }, c ? `${label} ✓` : label);
+  root.append(h('div', { class: 'grid2' }, ciBtn('morning', m, 'Morning'), ciBtn('evening', e, 'Evening')));
+
+  root.append(h('button', { class: 'btn urge', onclick: () => go('urge') }, 'Urge'));
+
+  const row = h('div', { class: 'grid2' });
+  if (S.settings.aiOn) row.append(h('button', { class: 'btn', onclick: () => go('talk') }, 'Talk'));
+  row.append(h('button', { class: 'btn', onclick: () => go('score') }, 'Scoreboard'));
+  if (!S.settings.aiOn) row.append(h('button', { class: 'btn', onclick: () => go('support') }, 'Support'));
+  root.append(row);
+  if (!S.lowdays[t]) root.append(h('button', { class: 'btn ghost small', style: 'margin:6px auto 0;display:flex',
+    onclick: () => { startLowday(t); go('home', null, false); } }, 'Use Low-Day Mode today'));
+  return root;
+};
+
+function startLowday(date) {
+  if (!S.lowdays[date]) S.lowdays[date] = { dogs: false, journal: '', daughter: false };
+  save();
+}
+function lowdayChecks(date, onChange) {
+  const ld = S.lowdays[date];
+  const upd = () => { save(); onChange && onChange(); };
+  const cb = (key, label) => {
+    const input = h('input', { type: 'checkbox', checked: ld[key] });
+    input.onchange = () => { ld[key] = input.checked; upd(); };
+    return h('label', { class: 'check' }, input, h('span', {}, label));
+  };
+  const journal = h('input', { type: 'text', placeholder: 'One journal line', maxlength: '200', value: ld.journal || '' });
+  journal.onchange = () => { ld.journal = journal.value.trim(); upd(); };
+  return h('div', {},
+    cb('dogs', 'Dogs fed, water, pads'),
+    h('div', { class: 'check', style: 'cursor:default' }, h('span', { style: 'width:26px;flex:none;text-align:center' }, (ld.journal || '').trim() ? '✓' : '·'), journal),
+    cb('daughter', 'Showed up for my daughter'));
+}
+function lowdayPanel(date) {
+  const p = h('div', { class: 'panel lowday' });
+  const draw = () => {
+    p.innerHTML = '';
+    const done = lowdayDone(S.lowdays[date]);
+    p.append(h('div', { class: 'row' }, h('span', { class: 'label grow' }, 'Low-Day Minimums'),
+      h('span', { class: 'small muted' }, done ? 'Full win ✓' : 'These count as a full day.')),
+      lowdayChecks(date, draw),
+      h('button', { class: 'btn ghost small', style: 'margin-top:8px', onclick: () => {
+        modal('Leave Low-Day Mode?', h('p', { class: 'muted' }, 'Today’s low-day entries will be removed.'), [
+          { label: 'Leave Low-Day Mode', cls: 'danger', fn: () => { delete S.lowdays[date]; save(); go('home', null, false); } },
+          { label: 'Keep it' }]);
+      } }, 'Exit Low-Day Mode'));
+  };
+  draw();
+  return p;
+}
+
+VIEWS.checkin = (type) => {
+  const t = todayKey();
+  const prev = getCheckin(t, type);
+  const st = { mood: prev ? prev.mood : null, energy: prev ? prev.energy : null, word: prev ? prev.word : '',
+    minimums: prev ? prev.minimums : (S.lowdays[t] ? 'lowday' : null) };
+  const root = h('div', {}, topbar(type === 'morning' ? 'Morning check-in' : 'Evening check-in'));
+  const word = h('input', { type: 'text', maxlength: '24', placeholder: 'one word', autocomplete: 'off', value: st.word });
+  root.append(
+    h('div', { class: 'field' }, h('span', { class: 'label' }, 'Mood'), scale(st.mood, v => st.mood = v)),
+    h('div', { class: 'field' }, h('span', { class: 'label' }, 'Energy'), scale(st.energy, v => st.energy = v)),
+    h('div', { class: 'field' }, h('span', { class: 'label' }, 'One word'), word));
+  if (type === 'evening') {
+    const lowBox = h('div', { class: 'panel lowday', style: 'margin-top:10px' });
+    const showLow = () => {
+      lowBox.style.display = st.minimums === 'lowday' ? '' : 'none';
+      if (st.minimums === 'lowday') { startLowday(t); lowBox.innerHTML = ''; lowBox.append(h('span', { class: 'label' }, 'Low-day minimums'), lowdayChecks(t)); }
+    };
+    root.append(h('div', { class: 'field' }, h('span', { class: 'label' }, 'Minimums today?'),
+      choice([['yes', 'Yes'], ['partial', 'Partial'], ['lowday', 'Low-day']], st.minimums, v => { st.minimums = v; showLow(); }), lowBox));
+    showLow();
+  }
+  root.append(h('button', { class: 'btn primary', style: 'margin-top:18px', onclick: () => {
+    if (!st.mood || !st.energy) return toast('Pick mood and energy.');
+    if (type === 'evening' && !st.minimums) return toast('Pick minimums.');
+    const rec = { id: prev ? prev.id : uid(), date: t, type, ts: Date.now(), mood: st.mood, energy: st.energy,
+      word: word.value.trim().split(/\s+/)[0] || '' };
+    if (type === 'evening') rec.minimums = st.minimums;
+    S.checkins = S.checkins.filter(c => !(c.date === t && c.type === type));
+    S.checkins.push(rec);
+    save();
+    toast('Logged.');
+    if (type === 'morning' && rec.mood <= 2 && !S.lowdays[t]) {
+      go('home', null, false); history.replaceState(null, '');
+      modal('Low-Day Mode?', h('p', { class: 'muted' }, 'Today can run on minimums: dogs, one journal line, show up for your daughter. That counts as a full win.'), [
+        { label: 'Switch to Low-Day Mode', cls: 'primary', fn: () => { startLowday(t); go('home', null, false); } },
+        { label: 'Not today' }]);
+      return;
+    }
+    go('home', null, false); history.replaceState(null, '');
+    if (type === 'evening') offerCoach(`[Evening check-in just logged: mood ${rec.mood}/5, energy ${rec.energy}/5, word "${rec.word || '—'}", minimums: ${rec.minimums}.] A short reply, please.`);
+  } }, 'Save'));
+  return root;
+};
+
+/* ----- Urge Mode ----- */
+const URGE_MS = 10 * 60 * 1000;
+const PROMPTS = [
+  { k: 'breath', text: 'Slow breathing.', sub: 'In for 4. Out for 6.' },
+  { k: 'outside', text: 'Step outside, or take the dogs out.' },
+  { k: 'text', text: 'Text someone.' },
+  { k: 'see', text: 'Name 5 things you can see.' },
+  { k: 'water', text: 'Drink a glass of water.' }
+];
+VIEWS.urge = () => {
+  const root = h('div', {}, topbar('Urge'));
+  if (S.urgeActive) { root.append(urgeTimer()); return root; }
+  const ta = h('textarea', { placeholder: 'What’s going on right now? (optional)', maxlength: '500' });
+  const begin = () => {
+    const text = ta.value.trim();
+    S.urgeActive = { start: Date.now(), text }; save();
+    if (CRISIS_RE.test(text)) showSupportModal();
+    go('urge', null, false);
+  };
+  root.append(h('h2', {}, 'You’re here. That counts.'),
+    h('div', { class: 'field' }, ta),
+    h('button', { class: 'btn primary', onclick: begin }, 'Start 10 minutes'),
+    h('button', { class: 'btn ghost', style: 'margin-top:10px', onclick: () => { ta.value = ''; begin(); } }, 'Skip, just start'));
+  return root;
+};
+function urgeTimer() {
+  const box = h('div');
+  const timer = h('div', { class: 'timer' });
+  const prompt = h('div', { class: 'panel prompt' });
+  let idx = -1, manual = 0;
+  const showPrompt = i => {
+    idx = i % PROMPTS.length;
+    const p = PROMPTS[idx];
+    prompt.innerHTML = '';
+    if (p.k === 'breath') prompt.append(h('div', { class: 'breath' }));
+    prompt.append(h('div', { class: 'big' }, p.text));
+    if (p.sub) prompt.append(h('div', { class: 'muted' }, p.sub));
+    if (p.k === 'text') {
+      const cs = S.settings.contacts.filter(c => c.phone);
+      if (cs.length) prompt.append(h('div', { class: 'row wrapr', style: 'justify-content:center' },
+        cs.map(c => h('a', { class: 'btn small', href: 'sms:' + c.phone.replace(/[^\d+]/g, '') }, c.name || c.phone))));
+      else prompt.append(h('div', { class: 'small muted' }, 'Add contacts in Settings for one-tap texting.'));
+    }
+  };
+  const tick = () => {
+    const left = Math.max(0, S.urgeActive.start + URGE_MS - Date.now());
+    timer.textContent = `${pad(Math.floor(left / 60000))}:${pad(Math.floor(left / 1000) % 60)}`;
+    const auto = Math.floor((Date.now() - S.urgeActive.start) / 30000) + manual;
+    if (auto !== idx) showPrompt(auto);
+    if (left === 0) { clearInterval(timerHandle); if (navigator.vibrate) navigator.vibrate(200); finish(true); }
+  };
+  const finish = (full) => {
+    box.innerHTML = '';
+    box.append(h('h2', {}, full ? '10 minutes done.' : 'How did it go?'),
+      h('div', { class: 'stack' },
+        h('button', { class: 'btn primary', onclick: () => logUrge('rode') }, 'Rode it out'),
+        h('button', { class: 'btn', onclick: () => logUrge('didnt') }, 'Didn’t')));
+  };
+  box.append(timer, prompt,
+    h('div', { class: 'grid2' },
+      h('button', { class: 'btn', onclick: () => { manual++; tick(); } }, 'Next prompt'),
+      h('button', { class: 'btn ghost', onclick: () => { clearInterval(timerHandle); finish(false); } }, 'End now')));
+  tick();
+  timerHandle = setInterval(tick, 500);
+  return box;
+}
+function logUrge(outcome) {
+  const a = S.urgeActive || { start: Date.now(), text: '' };
+  S.urges.push({ id: uid(), date: dkey(new Date(a.start)), ts: a.start, text: a.text, outcome });
+  S.urgeActive = null; save();
+  go('home', null, false); history.replaceState(null, '');
+  toast('Logged. Thanks for checking in.', 2600);
+  offerCoach(`[Urge Mode just finished. Outcome: ${outcome === 'rode' ? 'rode it out' : 'didn’t'}.${a.text ? ` They wrote: "${a.text}"` : ''}] A short reply, please.`);
+}
+
+/* ----- Scoreboard ----- */
+VIEWS.score = (offset = 0) => {
+  // Week = Monday..Sunday; offset in weeks back.
+  const now = new Date();
+  const dow = (now.getDay() + 6) % 7;
+  const mon = addDays(todayKey(), -dow - 7 * offset);
+  const days = [...Array(7)].map((_, i) => addDays(mon, i));
+  const inW = d => d >= days[0] && d <= days[6];
+  const ci = S.checkins.filter(c => inW(c.date));
+  const ur = S.urges.filter(u => inW(u.date));
+  const moods = days.map(d => avg(dayMoods(d)));
+  const root = h('div', {}, topbar('Sunday Scoreboard'));
+  root.append(h('div', { class: 'row', style: 'margin-bottom:12px' },
+    h('button', { class: 'iconbtn', onclick: () => go('score', offset + 1, false), 'aria-label': 'Previous week' }, '‹'),
+    h('div', { class: 'grow', style: 'text-align:center' }, `${fmtDate(days[0])} – ${fmtDate(days[6])}`),
+    h('button', { class: 'iconbtn', disabled: offset === 0, onclick: () => offset && go('score', offset - 1, false), 'aria-label': 'Next week' }, '›')));
+  root.append(h('div', { class: 'panel' }, h('span', { class: 'label' }, 'Mood trend'), trendSvg(moods, days)));
+  const stat = (l, v) => h('div', { class: 'stat' }, h('span', { class: 'label' }, l), h('b', {}, v));
+  root.append(h('div', { class: 'stats' },
+    stat('Avg mood', r1(avg(ci.map(c => c.mood)))),
+    stat('Avg energy', r1(avg(ci.map(c => c.energy)))),
+    stat('Check-ins', ci.length),
+    stat('Urges', ur.length),
+    stat('Rode it out', ur.filter(u => u.outcome === 'rode').length),
+    stat('Low days', days.filter(d => S.lowdays[d]).length),
+    stat('Wins', `${days.filter(dayWin).length}/7`),
+    stat('Partial', ci.filter(c => c.minimums === 'partial').length),
+    stat('Streak', offset === 0 ? streak() : streak(days[6]))));
+  return root;
+};
+function trendSvg(vals, days) {
+  const W = 320, H = 150, px = 22, py = 16;
+  const x = i => px + i * (W - 2 * px) / 6, y = v => H - py - (v - 1) * (H - 2 * py) / 4;
+  const ns = 'http://www.w3.org/2000/svg';
+  const el = (t, a) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const svg = el('svg', { class: 'trend', viewBox: `0 0 ${W} ${H + 18}`, role: 'img', 'aria-label': 'Daily mood, 1 to 5' });
+  for (let v = 1; v <= 5; v++) {
+    svg.append(el('line', { x1: px, x2: W - px, y1: y(v), y2: y(v), stroke: '#263241', 'stroke-width': 1 }));
+    const t = el('text', { x: 4, y: y(v) + 4, fill: '#5d6b7a', 'font-size': 11 }); t.textContent = v; svg.append(t);
+  }
+  let d = '', pen = false;
+  vals.forEach((v, i) => { if (v == null) { pen = false; return; } d += `${pen ? 'L' : 'M'}${x(i)},${y(v)}`; pen = true; });
+  if (d) svg.append(el('path', { d, fill: 'none', stroke: '#6cc4b0', 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+  vals.forEach((v, i) => {
+    if (v != null) svg.append(el('circle', { cx: x(i), cy: y(v), r: 4, fill: '#6cc4b0' }));
+    const t = el('text', { x: x(i), y: H + 12, fill: '#8b98a7', 'font-size': 11, 'text-anchor': 'middle' });
+    t.textContent = 'MTWTFSS'[i]; svg.append(t);
+  });
+  return svg;
+}
+
+/* ----- Support ----- */
+function supportCard(triggered) {
+  const s = S.settings;
+  const p = h('div', { class: 'panel support' });
+  p.append(h('div', { class: 'row' }, h('span', { class: 'label grow' }, 'Support'),
+    triggered ? h('button', { class: 'btn ghost small', onclick: () => {
+      S.safety.dismissedThrough = todayKey(); save(); p.remove();
+    } }, 'Dismiss') : null));
+  if (triggered) p.append(h('p', { class: 'small muted', style: 'margin-top:8px' }, 'A few low days in a row. These are here if you want them.'));
+  const callText = (name, num, sub) => h('div', { class: 'line-item' },
+    h('div', { class: 'txt' }, h('div', {}, name), sub ? h('div', { class: 'small muted' }, sub) : null),
+    h('a', { class: 'btn small', href: 'tel:' + num.replace(/[^\d+]/g, '') }, 'Call'),
+    h('a', { class: 'btn small', href: 'sms:' + num.replace(/[^\d+]/g, '') }, 'Text'));
+  for (const c of s.contacts) if (c.phone) p.append(callText(c.name || c.phone, c.phone));
+  if (s.eap) p.append(h('div', { class: 'line-item' }, h('div', { class: 'txt' }, 'EAP', h('div', { class: 'small muted' }, s.eap)),
+    h('a', { class: 'btn small', href: 'tel:' + s.eap.replace(/[^\d+]/g, '') }, 'Call')));
+  p.append(callText('988 Suicide & Crisis Lifeline', '988', 'Call or text 988'));
+  p.append(h('div', { class: 'line-item' }, h('div', { class: 'txt' }, 'National Alliance for Eating Disorders', h('div', { class: 'small muted' }, '1-866-662-1235')),
+    h('a', { class: 'btn small', href: 'tel:18666621235' }, 'Call')));
+  if (s.portal) p.append(h('div', { class: 'line-item' }, h('div', { class: 'txt' }, 'Benefits portal'),
+    h('a', { class: 'btn small', href: s.portal, target: '_blank', rel: 'noopener' }, 'Open')));
+  if (!s.contacts.length || !s.eap || !s.portal) p.append(h('button', { class: 'btn ghost small', style: 'margin-top:8px', onclick: () => go('settings') }, 'Edit in Settings'));
+  return p;
+}
+function showSupportModal() {
+  modal('You don’t have to do this alone', h('div', {}, h('p', { class: 'muted' }, 'If you’re in danger, call 911. Otherwise, reach out now:'), supportCard(false)),
+    [{ label: 'Close' }]);
+}
+VIEWS.support = () => h('div', {}, topbar('Support'), supportCard(false));
+
+/* ----- Menu ----- */
+VIEWS.menu = () => h('div', {}, topbar('Menu'), h('div', { class: 'menu-list' },
+  [['Support', 'support'], ['Sunday Scoreboard', 'score'], ['Talk (AI Coach)', 'talk'], ['Memory', 'memory'], ['Settings & Data', 'settings']]
+    .map(([l, v]) => h('button', { class: 'btn', onclick: () => { history.replaceState({ v, arg: null }, ''); go(v, null, false); } }, l))));
+
+/* ----- Memory ----- */
+VIEWS.memory = () => {
+  const root = h('div', {}, topbar('Memory'));
+  const about = h('textarea', { class: 'big', placeholder: 'About me: job, schedule, daughter, dogs, goals, what I’m working on…', value: S.about });
+  about.oninput = () => { S.about = about.value; save(); };
+  root.append(h('div', { class: 'panel' }, h('h3', {}, 'About Me'), about, h('div', { class: 'small muted', style: 'margin-top:6px' }, 'Saves as you type.')));
+
+  // Notes
+  const notesBox = h('div', { class: 'panel' }, h('h3', {}, 'Notes'));
+  const newNote = h('input', { type: 'text', placeholder: 'e.g. started DBT', maxlength: '300' });
+  const list = h('div');
+  const drawNotes = () => {
+    list.innerHTML = '';
+    if (!S.notes.length) list.append(h('p', { class: 'small muted', style: 'margin-top:10px' }, 'No notes yet.'));
+    [...S.notes].sort((a, b) => b.ts - a.ts).forEach(n => list.append(item(
+      h('div', {}, n.text, h('div', { class: 'small muted' }, fmtTs(n.ts) + (n.edited ? ' · edited' : ''))),
+      () => editModal('Edit note', [['text', 'Note', 'text']], n, () => { n.edited = Date.now(); drawNotes(); }),
+      () => { S.notes = S.notes.filter(x => x !== n); save(); drawNotes(); })));
+  };
+  const add = () => { const t = newNote.value.trim(); if (!t) return; S.notes.push({ id: uid(), ts: Date.now(), text: t }); save(); newNote.value = ''; drawNotes(); };
+  newNote.onkeydown = e => { if (e.key === 'Enter') add(); };
+  notesBox.append(h('div', { class: 'row' }, newNote, h('button', { class: 'btn small primary', onclick: add }, 'Add')), list);
+  drawNotes();
+  root.append(notesBox);
+
+  root.append(h('div', { class: 'panel' }, h('h3', {}, 'Last 14 days'), h('pre', { class: 'sum' }, summarize(14))));
+  root.append(h('div', { class: 'panel' }, h('h3', {}, 'Last 90 days'), h('pre', { class: 'sum' }, summarize(90))));
+
+  // Logs
+  const section = (title, draw) => { const box = h('div', { class: 'panel' }, h('h3', {}, title)); const inner = h('div'); box.append(inner); const redraw = () => { inner.innerHTML = ''; draw(inner, redraw); }; redraw(); return box; };
+  root.append(section('Check-ins', (el, redraw) => {
+    const cs = [...S.checkins].sort((a, b) => b.ts - a.ts);
+    if (!cs.length) el.append(h('p', { class: 'small muted' }, 'None yet.'));
+    cs.forEach(c => el.append(item(
+      h('div', {}, `${fmtDate(c.date)} · ${c.type}`, h('div', { class: 'small muted' },
+        `mood ${c.mood} · energy ${c.energy}${c.word ? ` · “${c.word}”` : ''}${c.minimums ? ` · minimums ${c.minimums}` : ''}`)),
+      () => editModal('Edit check-in', [['mood', 'Mood (1–5)', 'n5'], ['energy', 'Energy (1–5)', 'n5'], ['word', 'One word', 'text']]
+        .concat(c.type === 'evening' ? [['minimums', 'Minimums', 'min']] : []), c, redraw),
+      () => { S.checkins = S.checkins.filter(x => x !== c); save(); redraw(); })));
+  }));
+  root.append(section('Urges', (el, redraw) => {
+    const us = [...S.urges].sort((a, b) => b.ts - a.ts);
+    if (!us.length) el.append(h('p', { class: 'small muted' }, 'None yet.'));
+    us.forEach(u => el.append(item(
+      h('div', {}, `${fmtTs(u.ts)} · ${u.outcome === 'rode' ? 'rode it out' : 'didn’t'}`, u.text ? h('div', { class: 'small muted' }, u.text) : null),
+      () => editModal('Edit urge', [['text', 'What was going on', 'text'], ['outcome', 'Outcome', 'out']], u, redraw),
+      () => { S.urges = S.urges.filter(x => x !== u); save(); redraw(); })));
+  }));
+  root.append(section('Low days', (el, redraw) => {
+    const ds = Object.keys(S.lowdays).sort().reverse();
+    if (!ds.length) el.append(h('p', { class: 'small muted' }, 'None yet.'));
+    ds.forEach(d => { const v = S.lowdays[d]; el.append(item(
+      h('div', {}, fmtDate(d) + (lowdayDone(v) ? ' · full win' : ''), h('div', { class: 'small muted' },
+        `dogs ${v.dogs ? '✓' : '–'} · daughter ${v.daughter ? '✓' : '–'}${v.journal ? ` · “${v.journal}”` : ''}`)),
+      () => editModal('Edit low day', [['dogs', 'Dogs fed / water / pads', 'bool'], ['journal', 'Journal line', 'text'], ['daughter', 'Showed up for daughter', 'bool']], v, redraw),
+      () => { delete S.lowdays[d]; save(); redraw(); })); });
+  }));
+  root.append(section('Coach chat', (el, redraw) => {
+    el.append(h('p', { class: 'small muted' }, `${S.chat.length} messages stored.`));
+    if (S.chat.length) el.append(h('button', { class: 'btn small danger', onclick: () => { S.chat = []; save(); redraw(); } }, 'Clear chat history'));
+  }));
+  return root;
+};
+function item(content, onEdit, onDelete) {
+  return h('div', { class: 'line-item' }, h('div', { class: 'txt' }, content),
+    h('button', { class: 'iconbtn', 'aria-label': 'Edit', onclick: onEdit }, '✎'),
+    h('button', { class: 'iconbtn', 'aria-label': 'Delete', onclick: () =>
+      modal('Delete this?', h('p', { class: 'muted' }, 'This can’t be undone.'), [{ label: 'Delete', cls: 'danger', fn: onDelete }, { label: 'Cancel' }]) }, '✕'));
+}
+function editModal(title, fields, obj, after) {
+  const vals = {};
+  const body = h('div');
+  for (const [k, label, kind] of fields) {
+    vals[k] = obj[k];
+    let ctl;
+    if (kind === 'n5') ctl = scale(obj[k], v => vals[k] = v);
+    else if (kind === 'min') ctl = choice([['yes', 'Yes'], ['partial', 'Partial'], ['lowday', 'Low-day']], obj[k], v => vals[k] = v);
+    else if (kind === 'out') ctl = choice([['rode', 'Rode it out'], ['didnt', 'Didn’t']], obj[k], v => vals[k] = v);
+    else if (kind === 'bool') { ctl = h('input', { type: 'checkbox', checked: !!obj[k], style: 'width:26px;height:26px' }); ctl.onchange = () => vals[k] = ctl.checked; }
+    else { ctl = h('input', { type: 'text', value: obj[k] || '' }); ctl.oninput = () => vals[k] = ctl.value; }
+    body.append(h('div', { class: 'field' }, h('span', { class: 'label' }, label), ctl));
+  }
+  modal(title, body, [{ label: 'Save', cls: 'primary', fn: () => {
+    for (const k in vals) obj[k] = typeof vals[k] === 'string' ? vals[k].trim() : vals[k];
+    save(); after && after();
+  } }, { label: 'Cancel' }]);
+}
+
+/* ----- Settings & Data ----- */
+VIEWS.settings = () => {
+  const s = S.settings;
+  const root = h('div', {}, topbar('Settings'));
+
+  // Reminders
+  const remOn = h('input', { type: 'checkbox', checked: s.remOn });
+  const tm = h('input', { type: 'time', value: s.remMorning });
+  const te = h('input', { type: 'time', value: s.remEvening });
+  tm.onchange = () => { s.remMorning = tm.value; save(); };
+  te.onchange = () => { s.remEvening = te.value; save(); };
+  remOn.onchange = async () => {
+    if (remOn.checked) {
+      if (!('Notification' in window)) { toast('Notifications not supported here.'); remOn.checked = false; return; }
+      const p = await Notification.requestPermission();
+      if (p !== 'granted') { toast('Notifications blocked.'); remOn.checked = false; return; }
+    }
+    s.remOn = remOn.checked; save();
+  };
+  root.append(h('div', { class: 'panel' }, h('h3', {}, 'Reminders'),
+    h('label', { class: 'check' }, remOn, h('span', {}, 'Check-in reminders')),
+    h('div', { class: 'grid2', style: 'margin-top:10px' },
+      h('div', {}, h('span', { class: 'label' }, 'Morning'), tm), h('div', {}, h('span', { class: 'label' }, 'Evening'), te)),
+    h('p', { class: 'small muted' }, 'Phones only let web apps notify while Anchor is open or recently used. For a reliable daily alarm, add it to your calendar:'),
+    h('button', { class: 'btn small', onclick: () => download('anchor-reminders.ics', icsFile(), 'text/calendar') }, 'Add reminders to calendar (.ics)')));
+
+  // Support
+  const contacts = h('div');
+  const drawContacts = () => {
+    contacts.innerHTML = '';
+    s.contacts.forEach((c, i) => contacts.append(h('div', { class: 'line-item' },
+      h('div', { class: 'txt' }, c.name || '(no name)', h('div', { class: 'small muted' }, c.phone)),
+      h('button', { class: 'iconbtn', 'aria-label': 'Remove', onclick: () => { s.contacts.splice(i, 1); save(); drawContacts(); } }, '✕'))));
+  };
+  drawContacts();
+  const cn = h('input', { type: 'text', placeholder: 'Name' });
+  const cp = h('input', { type: 'tel', placeholder: 'Phone' });
+  const eap = h('input', { type: 'tel', placeholder: 'EAP phone number', value: s.eap });
+  const portal = h('input', { type: 'url', placeholder: 'https://… benefits portal', value: s.portal });
+  eap.onchange = () => { s.eap = eap.value.trim(); save(); };
+  portal.onchange = () => { s.portal = portal.value.trim(); save(); };
+  root.append(h('div', { class: 'panel' }, h('h3', {}, 'Support card'),
+    h('span', { class: 'label' }, 'Personal contacts'), contacts,
+    h('div', { class: 'grid2', style: 'margin-top:10px' }, cn, cp),
+    h('button', { class: 'btn small', onclick: () => {
+      if (!cp.value.trim()) return toast('Add a phone number.');
+      s.contacts.push({ name: cn.value.trim(), phone: cp.value.trim() }); save(); cn.value = cp.value = ''; drawContacts();
+    } }, 'Add contact'),
+    h('div', { class: 'field' }, h('span', { class: 'label' }, 'EAP number'), eap),
+    h('div', { class: 'field' }, h('span', { class: 'label' }, 'Benefits portal link'), portal),
+    h('p', { class: 'small muted' }, '988 and the National Alliance for Eating Disorders helpline are always included.')));
+
+  // AI Coach
+  const aiOn = h('input', { type: 'checkbox', checked: s.aiOn });
+  const key = h('input', { type: 'password', placeholder: 'Anthropic API key (sk-ant-…)', value: s.apiKey, autocomplete: 'off' });
+  aiOn.onchange = () => { s.aiOn = aiOn.checked; save(); };
+  key.onchange = () => { s.apiKey = key.value.trim(); save(); };
+  root.append(h('div', { class: 'panel' }, h('h3', {}, 'AI Coach'),
+    h('label', { class: 'check' }, aiOn, h('span', {}, 'AI Coach')),
+    h('p', { class: 'warn' }, 'When on, your memory and logs are sent to Anthropic to generate replies.'),
+    key, h('p', { class: 'small muted', style: 'margin-top:6px' }, 'Key is stored on this device only and is not included in exports.')));
+
+  // Data
+  const file = h('input', { type: 'file', accept: 'application/json,.json', style: 'display:none' });
+  file.onchange = () => {
+    const f = file.files[0]; if (!f) return;
+    f.text().then(txt => {
+      let d; try { d = JSON.parse(txt); } catch (e) { return toast('Not a valid Anchor file.'); }
+      if (!d || typeof d !== 'object' || !Array.isArray(d.checkins)) return toast('Not a valid Anchor file.');
+      modal('Replace all data?', h('p', { class: 'muted' }, 'Current data on this device will be replaced by the backup.'), [
+        { label: 'Import', cls: 'primary', fn: () => {
+          const key = S.settings.apiKey;
+          S = normalize(d); S.settings.apiKey = S.settings.apiKey || key; save(); toast('Imported.'); go('home', null, false);
+        } }, { label: 'Cancel' }]);
+    });
+    file.value = '';
+  };
+  root.append(h('div', { class: 'panel' }, h('h3', {}, 'Data'),
+    h('div', { class: 'stack' },
+      h('button', { class: 'btn', onclick: () => {
+        const out = JSON.parse(JSON.stringify(S)); out.settings.apiKey = ''; out.exportedAt = new Date().toISOString();
+        download(`anchor-backup-${todayKey()}.json`, JSON.stringify(out, null, 2), 'application/json');
+      } }, 'Export backup (JSON)'),
+      h('button', { class: 'btn', onclick: () => file.click() }, 'Import backup'), file,
+      h('button', { class: 'btn danger', onclick: () => modal('Clear all data?', h('p', { class: 'muted' }, 'Everything on this device will be erased: check-ins, urges, memory, notes, settings. Export first if you want a backup.'), [
+        { label: 'Erase everything', cls: 'danger', fn: () => { localStorage.removeItem(KEY); S = DEFAULTS(); save(); toast('Cleared.'); go('home', null, false); } },
+        { label: 'Cancel' }]) }, 'Clear all data'))));
+  return root;
+};
+function icsFile() {
+  const now = new Date(), stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  const day = todayKey().replace(/-/g, '');
+  const ev = (id, time, what) => [
+    'BEGIN:VEVENT', `UID:anchor-${id}@anchor.local`, `DTSTAMP:${stamp}`,
+    `DTSTART:${day}T${time.replace(':', '')}00`, 'DURATION:PT5M', 'RRULE:FREQ=DAILY',
+    `SUMMARY:Anchor: ${what}`, 'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:Anchor: ${what}`, 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT'];
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Anchor//EN',
+    ...ev('morning', S.settings.remMorning || '08:00', 'morning check-in'),
+    ...ev('evening', S.settings.remEvening || '21:00', 'evening check-in'), 'END:VCALENDAR'].join('\r\n');
+}
+function checkReminders() {
+  const s = S.settings;
+  if (!s.remOn || !('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = new Date(), t = todayKey();
+  for (const type of ['morning', 'evening']) {
+    const time = type === 'morning' ? s.remMorning : s.remEvening;
+    if (!time) continue;
+    const [hh, mm] = time.split(':').map(Number);
+    const due = new Date(now); due.setHours(hh, mm, 0, 0);
+    if (now >= due && now - due < 4 * 3600e3 && S.remSent[type] !== t && !getCheckin(t, type)) {
+      S.remSent[type] = t; save();
+      const body = type === 'morning' ? 'Morning check-in. 30 seconds.' : 'Evening check-in. 30 seconds.';
+      navigator.serviceWorker && navigator.serviceWorker.ready
+        .then(r => r.showNotification('Anchor', { body, icon: 'icon-192.png', tag: 'anchor-' + type }))
+        .catch(() => { try { new Notification('Anchor', { body }); } catch (e) {} });
+    }
+  }
+}
+
+/* ========== AI Coach ========== */
+const MODEL = 'claude-sonnet-5-5';
+const COACH_RULES = `You are Anchor Coach: a direct, supportive mentor for one person. They make the final decisions. You offer perspective and options, never orders.
+
+Style:
+- Short replies, usually 1 to 4 sentences. Terse. No lectures. No lists unless asked.
+- Warm, plain, never shaming. No toxic positivity. At most one question per reply.
+
+Hard limits:
+- Never give food, calorie, weight, diet, portion, macro, or exercise numbers or plans. Never comment on body size, shape, or weight. If asked, say briefly that's outside what you do here and point to their care team.
+- Never diagnose. Never explain WHY they feel, urge, or eat a certain way, and don't interpret their motives. Reflect back only what they actually said, then ask what connections they see.
+- When relevant, encourage real-world support (therapist, DBT skills, EAP). Not every reply. No nagging.
+
+Crisis:
+- If they mention self-harm, suicide, wanting to die, or being in crisis: respond with care in plain words, encourage them to reach out right now (call or text 988, or their contacts), and end your reply with the line [[SUPPORT]] on its own line. The app will show their Support card.
+
+Memory:
+- The context below is their own saved profile, notes, and logs. Use it to be specific. Don't recite it back.
+- If they share new, lasting info (schedule changes, treatment, people, patterns they name themselves), you may end your reply with one line in exactly this form: SAVE: <short note in their words>. At most one per reply. Never for food, weight, or body details. The app asks them before saving anything.`;
+
+function coachContext() {
+  const t = todayKey();
+  const today = S.checkins.filter(c => c.date === t)
+    .map(c => `${c.type}: mood ${c.mood}/5, energy ${c.energy}/5${c.word ? `, word "${c.word}"` : ''}${c.minimums ? `, minimums ${c.minimums}` : ''}`);
+  const ld = S.lowdays[t];
+  if (ld) today.push(`Low-Day Mode on: dogs ${ld.dogs ? 'done' : 'not yet'}, daughter ${ld.daughter ? 'done' : 'not yet'}, journal ${ld.journal ? `"${ld.journal}"` : 'not yet'}`);
+  const notes = S.notes.map(n => `- ${new Date(n.ts).toISOString().slice(0, 10)}: ${n.text}`).join('\n');
+  return `Now: ${new Date().toLocaleString()}
+
+<about_me>
+${S.about.trim() || '(empty)'}
+</about_me>
+
+<notes>
+${notes || '(none)'}
+</notes>
+
+<summary_14_days>
+${summarize(14)}
+</summary_14_days>
+
+<summary_90_days>
+${summarize(90)}
+</summary_90_days>
+
+<today>
+${today.join('\n') || '(no check-ins yet today)'}
+</today>`;
+}
+
+async function askCoach(history) {
+  const msgs = history.slice(-12).map(m => ({ role: m.role, content: m.content }));
+  while (msgs.length && msgs[0].role !== 'user') msgs.shift();
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': S.settings.apiKey,
+      'anthropic-version': '2026-10-21',
+      'anthropic-beta': 'server-side-fallback-2026-07-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 1500,
+      system: COACH_RULES + '\n\n' + coachContext(),
+      messages: msgs,
+      thinking: { type: 'between_tools' },
+      output_config: { effort: 'low' },
+      fallbacks: 'default'
+    })
+  });
+  if (!res.ok) {
+    let msg = `Error ${res.status}.`;
+    if (res.status === 401) msg = 'API key was rejected. Check it in Settings.';
+    else if (res.status === 429) msg = 'Rate limited. Try again in a minute.';
+    else if (res.status >= 500) msg = 'Anthropic is having trouble. Try again soon.';
+    else { try { const j = await res.json(); if (j.error && j.error.message) msg += ' ' + j.error.message; } catch (e) {} }
+    throw new Error(msg);
+  }
+  const data = await res.json();
+  if (data.stop_reason === 'refusal') return { text: '', refused: true };
+  return { text: (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('').trim() };
+}
+
+function parseReply(text) {
+  let support = false, saveNote = null;
+  const lines = text.split('\n').filter(l => {
+    const t = l.trim();
+    if (t === '[[SUPPORT]]') { support = true; return false; }
+    const m = t.match(/^SAVE:\s*(.+)$/);
+    if (m) { saveNote = m[1].trim(); return false; }
+    return true;
+  });
+  if (saveNote && BODY_RE.test(saveNote)) saveNote = null;
+  return { text: lines.join('\n').trim(), support, saveNote };
+}
+
+function offerCoach(prompt) {
+  if (!S.settings.aiOn || !S.settings.apiKey || !navigator.onLine) return;
+  setTimeout(() => modal('Coach', h('p', { class: 'muted' }, 'Want a short reply from Coach?'), [
+    { label: 'Yes', cls: 'primary', fn: () => { history.pushState({ v: 'talk', arg: prompt }, ''); go('talk', prompt, false); } },
+    { label: 'No thanks' }]), 900);
+}
+
+VIEWS.talk = (autoPrompt) => {
+  const root = h('div', {}, topbar('Talk'));
+  if (!S.settings.aiOn || !S.settings.apiKey) {
+    root.append(h('div', { class: 'panel' }, h('p', {}, 'AI Coach is off.'),
+      h('p', { class: 'small muted' }, 'Turn it on and add an API key in Settings. Everything else works without it.'),
+      h('button', { class: 'btn', onclick: () => go('settings') }, 'Open Settings')));
+    return root;
+  }
+  const chat = h('div', { class: 'chat' });
+  const input = h('textarea', { placeholder: 'Say what’s going on…', style: 'min-height:80px' });
+  const sendBtn = h('button', { class: 'btn primary', style: 'margin-top:8px' }, 'Send');
+  const bubble = m => {
+    const b = h('div', { class: 'msg ' + m.role }, m.content);
+    chat.append(b);
+    return b;
+  };
+  const drawAll = () => { chat.innerHTML = ''; S.chat.slice(-30).forEach(m => { if (!m.hidden) bubble(m); }); };
+  drawAll();
+  if (!S.chat.length) chat.append(h('div', { class: 'msg sys' }, 'Coach sees your About Me, Notes, summaries, and today’s check-ins.'));
+
+  const send = async (text, hidden) => {
+    if (!text) return;
+    if (!navigator.onLine) { chat.append(h('div', { class: 'msg sys' }, 'No signal. Coach is unavailable; everything else works offline.')); return; }
+    if (CRISIS_RE.test(text)) showSupportModal();
+    const um = { role: 'user', content: text, ts: Date.now() };
+    if (hidden) um.hidden = true;
+    S.chat.push(um); save();
+    if (!hidden) bubble(um);
+    const wait = h('div', { class: 'msg sys' }, '…');
+    chat.append(wait); wait.scrollIntoView({ block: 'end' });
+    sendBtn.disabled = true;
+    try {
+      const r = await askCoach(S.chat);
+      wait.remove();
+      if (r.refused || !r.text) {
+        S.chat.pop(); save();
+        chat.append(h('div', { class: 'msg sys' }, 'Coach can’t reply to that one. Your Support card is in the menu.'));
+        return;
+      }
+      const p = parseReply(r.text);
+      const am = { role: 'assistant', content: p.text || '…', ts: Date.now() };
+      S.chat.push(am); save();
+      bubble(am).scrollIntoView({ block: 'end' });
+      if (p.support) showSupportModal();
+      if (p.saveNote) {
+        const chip = h('div', { class: 'chip' }, h('span', { class: 'grow' }, `Save to Notes? “${p.saveNote}”`));
+        chip.append(h('button', { class: 'btn small primary', onclick: () => {
+          S.notes.push({ id: uid(), ts: Date.now(), text: p.saveNote }); save(); chip.replaceWith(h('div', { class: 'msg sys' }, 'Saved to Notes.'));
+        } }, 'Save'), h('button', { class: 'btn small ghost', onclick: () => chip.remove() }, 'No'));
+        chat.append(chip);
+      }
+    } catch (e) {
+      wait.remove();
+      S.chat.pop(); save();
+      chat.append(h('div', { class: 'msg sys' }, e.message || 'Couldn’t reach Coach.'));
+    } finally { sendBtn.disabled = false; }
+  };
+  sendBtn.onclick = () => { const t = input.value.trim(); input.value = ''; send(t); };
+  root.append(chat, input, sendBtn);
+  if (autoPrompt) setTimeout(() => send(autoPrompt, true), 50);
+  return root;
+};
+
+/* ========== Boot ========== */
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
+window.addEventListener('online', () => view === 'home' && go('home', null, false));
+window.addEventListener('offline', () => view === 'home' && go('home', null, false));
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') { checkReminders(); if (view === 'home') go('home', null, false); }
+});
+setInterval(checkReminders, 60000);
+history.replaceState(null, '');
+go(S.urgeActive ? 'urge' : 'home', null, !!S.urgeActive);
+checkReminders();
+</script>
+</body>
+</html>
